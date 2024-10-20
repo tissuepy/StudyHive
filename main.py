@@ -25,10 +25,9 @@ users = [ # creating a dictionary with users)
 ]
 
 #users = df[]
-#userID = 1                      # we should auto send a user id from react to here so we know who is being compared 
-#currentUser = df[:userID]
-
-userMatch = df(['score'])['Value'].max()
+userID = 1                      # we should auto send a user id from react to here so we know who is being compared 
+currentUser = df[:userID]
+#userMatch = df['score']['Value'].max()
 
 
 def match_function(user1, user2):
@@ -59,7 +58,8 @@ def compare_users(users):
     
     return match_results, score
 
-results = compare_users(users)
-for result in results:
+match_results, score = compare_users(users)  # Unpack the returned tuple
+
+# Loop through match_results
+for result in match_results:
     print(f"Match score between {result['user1']} and {result['user2']}: {result['match_score']}")
-#supabase.table("userData").insert({score}).execute()
