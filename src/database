@@ -1,0 +1,93 @@
+import sqlite3
+
+# Connect to the SQLite database (or create it if it doesn't exist)
+conn = sqlite3.connect('neu_students.db')
+
+# Create a cursor object to execute SQL commands
+cursor = conn.cursor()
+
+# Create a table to store student data (if it doesn't exist)
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS students (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    neu_email TEXT NOT NULL UNIQUE,
+    course_number TEXT NOT NULL
+)
+''')
+
+# Commit the changes
+conn.commit()
+
+# Function to insert student data
+def insert_student(name, neu_email, course_number):
+    try:
+        cursor.execute('''
+        INSERT INTO students (name, neu_email, course_number) VALUES (?, ?, ?)
+        ''', (name, neu_email, course_number))
+        conn.commit()
+        print(f"\nStudent {name} added successfully!")
+    except sqlite3.IntegrityError:
+        print(f"\nError: The email {neu_email} already exists in the database.")
+
+# Function to display all students in the database
+def display_students():
+    cursor.execute('SELECT * FROM students')
+    rows = cursor.fetchall()
+
+    if rows:
+        print("\nStudent Database:")
+        print("{:<5} {:<20} {:<30} {:<15}".format('ID', 'Name', 'NEU Email', 'Course Number'))
+        print("-" * 75)
+        for row in rows:
+            print("{:<5} {:<20} {:<30} {:<15}".format(row[0], row[1], row[2], row[3]))
+    else:
+        print("\nNo students found in the database.")
+
+# Function to delete a student by NEU email
+def delete_student_by_email(neu_email):
+    cursor.execute('SELECT * FROM students WHERE neu_email = ?', (neu_email,))
+    student = cursor.fetchone()
+
+    if student:
+        cursor.execute('DELETE FROM students WHERE neu_email = ?', (neu_email,))
+        conn.commit()
+        print(f"\nStudent with email {neu_email} has been deleted.")
+    else:
+        print(f"\nError: No student found with the email {neu_email}.")
+
+# Function to get user input and add a student to the database
+def get_user_input():
+    print("\nEnter student information to add to the database:")
+    name = input("Enter name: ").strip()
+    neu_email = input("Enter NEU email: ").strip()
+    course_number = input("Enter course number: ").strip()
+
+    # Insert user input into the database
+    insert_student(name, neu_email, course_number)
+
+# Main loop
+while True:
+    print("\nMenu:")
+    print("1. Add a new student")
+    print("2. Display all students")
+    print("3. Delete a student by NEU email")
+    print("4. Exit")
+
+    choice = input("Choose an option (1/2/3/4): ").strip()
+
+    if choice == '1':
+        get_user_input()
+    elif choice == '2':
+        display_students()
+    elif choice == '3':
+        email_to_delete = input("\nEnter the NEU email of the student to delete: ").strip()
+        delete_student_by_email(email_to_delete)
+    elif choice == '4':
+        print("Exiting the program.")
+        break
+    else:
+        print("Invalid choice. Please try again.")
+
+# Close the connection when done
+conn.close()
