@@ -4,8 +4,6 @@ import coverlogo from './assets/coverlogo.png';
 import { Link } from 'react-router-dom';
 
 
-
-
 const Login = () => {
    const navigate = useNavigate(); // Hook to programmatically navigate
 
@@ -31,6 +29,11 @@ const Login = () => {
                </div>
                <button className="login-button">
  <Link to="/create-account" style={{ textDecoration: 'none', color: 'white' }}>
+   Create Account
+ </Link>
+</button>
+<button className="login-button">
+ <Link to="/login" style={{ textDecoration: 'none', color: 'white' }}>
    Login
  </Link>
 </button>
