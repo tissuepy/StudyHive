@@ -4,8 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import './App.css';
 import coverlogo from './assets/coverlogo.png';
 import { Link } from 'react-router-dom';
-import { supabase } from './supabaseClient.js';
-
+import { supabase } from './supabaseClient';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -23,17 +22,17 @@ const Login = () => {
       .eq('neu_email', email)
       .single();
 
-    if (data) {
-      if (data.password === password) {
-        setMessage('Login successful!');
-        // Navigate to a dashboard or home page after login
-        navigate('/dashboard');
-      } else {
-        setMessage('Error: Incorrect password.');
-      }
-    } else {
-      setMessage('Error: No account found with this email.');
-    }
+    // Inside handleLogin function in Login.jsx
+if (data) {
+  if (data.password === password) {
+    localStorage.setItem("authToken", "yourAuthToken"); // Store auth token on successful login
+    setMessage('Login successful!');
+    navigate('/dashboard'); // Navigate to the main dashboard instead of databasePage
+  } else {
+    setMessage('Error: Incorrect password.');
+  }
+}
+
   };
 
   return (
@@ -45,7 +44,7 @@ const Login = () => {
           <div className="input-box">
             <input
               type="email"
-              placeholder="neu_email                                                                                           📧"
+              placeholder="NEU Email 📧"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -54,7 +53,7 @@ const Login = () => {
           <div className="input-box">
             <input
               type="password"
-              placeholder="Password                                                                                            🔒"
+              placeholder="Password 🔒"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
