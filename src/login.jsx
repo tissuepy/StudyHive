@@ -1,47 +1,74 @@
-import './App.css'
+// Login.jsx
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './App.css';
 import coverlogo from './assets/coverlogo.png';
 import { Link } from 'react-router-dom';
+import { supabase } from './supabaseClient.js';
 
 
 const Login = () => {
-   const navigate = useNavigate(); // Hook to programmatically navigate
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
+  // Handle login
+  const handleLogin = async (e) => {
+    e.preventDefault();
 
-   // Function to handle form submission
-   const handleLogin = (e) => {
-       e.preventDefault(); // Prevent default form submission
-       navigate('/CreateAccount'); // Navigate to the Create Account page
-   };
+    const { data, error } = await supabase
+      .from('userData')
+      .select('password')
+      .eq('neu_email', email)
+      .single();
 
+    if (data) {
+      if (data.password === password) {
+        setMessage('Login successful!');
+        // Navigate to a dashboard or home page after login
+        navigate('/dashboard');
+      } else {
+        setMessage('Error: Incorrect password.');
+      }
+    } else {
+      setMessage('Error: No account found with this email.');
+    }
+  };
 
-   return (
-<div className="login-container">
-           <img src={coverlogo} alt="Logo" className="logo" />
-  <div className="wrapper">
-  <form className="login-form" onSubmit={handleLogin}>
-           <h1 className="title">Welcome to StudyHive! 📚</h1>
-               <div className="input-box">
-                   <input type="text" placeholder="Username                                                                                           👤" required />
-               </div>
-               <div className="input-box">
-                   <input type="password" placeholder="Password                                                                                            🔒" required />
-               </div>
-               <button className="login-button">
- <Link to="/create-account" style={{ textDecoration: 'none', color: 'white' }}>
-   Create Account
- </Link>
-</button>
-<button className="login-button">
- <Link to="/login" style={{ textDecoration: 'none', color: 'white' }}>
-   Login
- </Link>
-</button>
-           </form>
-       </div>
-       </div>
-   )
-}
+  return (
+    <div className="login-container">
+      <img src={coverlogo} alt="Logo" className="logo" />
+      <div className="wrapper">
+        <form className="login-form" onSubmit={handleLogin}>
+          <h1 className="title">Welcome to StudyHive! 📚</h1>
+          <div className="input-box">
+            <input
+              type="email"
+              placeholder="neu_email                                                                                           📧"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="input-box">
+            <input
+              type="password"
+              placeholder="Password                                                                                            🔒"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" className="login-button">Login</button>
+          <p>{message && <span>{message}</span>}</p>
+          <p className="link-text">
+            Don't have an account? <Link to="/create-account">Create one here</Link>
+          </p>
+        </form>
+      </div>
+    </div>
+  );
+};
 
-
-export default Login
+export default Login;
