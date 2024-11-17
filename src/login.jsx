@@ -26,13 +26,13 @@ const Login = () => {
 if (data) {
   if (data.password === password) {
     localStorage.setItem("authToken", "yourAuthToken"); // Store auth token on successful login
+    localStorage.setItem("neu_email", email); // Store the email to use as username
     setMessage('Login successful!');
-    navigate('/dashboard'); // Navigate to the main dashboard instead of databasePage
+    navigate('/dashboard'); // Navigate to the main dashboard
   } else {
     setMessage('Error: Incorrect password.');
   }
 }
-
   };
 
   return (

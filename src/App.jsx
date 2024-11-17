@@ -41,7 +41,7 @@ function App() {
           }
         />
         <Route
-          path="/databasePage"
+          path="/DatabasePage"
           element={
             <ProtectedRoute>
               <DatabasePage />
