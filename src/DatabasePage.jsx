@@ -2,23 +2,93 @@ import React, { useState, useEffect } from "react";
 import { supabase } from "./supabaseClient";
 
 const DatabasePage = () => {
+  // User details (for updating)
+  const [name, setName] = useState("");
+  const [courseNumber, setCourseNumber] = useState("");
+  const [availableTime, setAvailableTime] = useState([]); // Array of strings
+  const [timeInput, setTimeInput] = useState(""); // Temporary input for new time slots
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Matching logic
   const [users, setUsers] = useState([]);
   const [matches, setMatches] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const loggedInEmail = localStorage.getItem("neu_email");
 
-  // Fetch users from Supabase
-  const fetchUsers = async () => {
-    console.log("Fetching users from Supabase...");
-    const { data, error } = await supabase.from("userData").select("neu_email, available_time, course_number");
+  // Fetch user data for updating
+  useEffect(() => {
+    if (!loggedInEmail) {
+      setMessage("You must be logged in to view this page.");
+      return;
+    }
+
+    const fetchUserData = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("userData")
+        .select("name, course_number, available_time")
+        .eq("neu_email", loggedInEmail)
+        .single();
+
+      if (error) {
+        console.error("Error fetching user data:", error);
+        setMessage("Error fetching your details.");
+      } else if (data) {
+        setName(data.name || "");
+        setCourseNumber(data.course_number || "");
+        setAvailableTime(data.available_time || []);
+      }
+      setLoading(false);
+    };
+
+    fetchUserData();
+  }, [loggedInEmail]);
+
+  // Add a new time slot
+  const handleAddTime = () => {
+    if (timeInput.trim()) {
+      setAvailableTime((prev) => [...prev, timeInput.trim()]);
+      setTimeInput(""); // Clear input
+    }
+  };
+
+  // Remove a time slot
+  const handleRemoveTime = (timeToRemove) => {
+    setAvailableTime((prev) => prev.filter((time) => time !== timeToRemove));
+  };
+
+  // Update user data
+  const handleUpdateUserData = async (e) => {
+    e.preventDefault();
+
+    const { error } = await supabase
+      .from("userData")
+      .update({
+        name,
+        course_number: courseNumber,
+        available_time: availableTime,
+      })
+      .eq("neu_email", loggedInEmail);
 
     if (error) {
-      console.error("Error fetching users:", error);
-      setMessage("Error fetching user data.");
+      console.error("Error updating user data:", error);
+      setMessage("Failed to update your details.");
+    } else {
+      setMessage("Your details have been updated successfully!");
+    }
+  };
+
+  // Fetch all users for matching
+  const fetchUsers = async () => {
+    console.log("Fetching all users...");
+    const { data, error } = await supabase.from("userData").select("neu_email, name, available_time, course_number");
+
+    if (error) {
+      console.error("Error fetching all users:", error);
+      setMessage("Error fetching all users.");
       return [];
     }
 
-    console.log("Fetched users:", data);
     return data.map((user) => ({
       ...user,
       available_time: normalizeAvailableTime(user.available_time),
@@ -30,26 +100,25 @@ const DatabasePage = () => {
     if (!availableTime) return null;
 
     if (Array.isArray(availableTime) && availableTime.length === 2) {
-      // Already in correct format
       return availableTime;
     }
 
     if (Array.isArray(availableTime) && availableTime.length === 1 && typeof availableTime[0] === "string") {
       const splitTime = availableTime[0].split(",");
       if (splitTime.length === 2) {
-        return splitTime.map((time) => time.trim()); // Trim and return as array
+        return splitTime.map((time) => time.trim());
       }
     }
 
     console.warn("Invalid available_time format:", availableTime);
-    return null; // Return null if format is invalid
+    return null;
   };
 
   // Parse time strings into minutes
   const parseTime = (time) => {
     if (!time || typeof time !== "string" || !time.includes(":")) return NaN;
     const [hours, minutes] = time.split(":").map(Number);
-    return hours * 60 + minutes; // Convert time to total minutes
+    return hours * 60 + minutes;
   };
 
   // Validate and calculate overlap in minutes between two time ranges
@@ -73,85 +142,135 @@ const DatabasePage = () => {
     return Math.max(0, overlapEnd - overlapStart); // Returns 0 if no overlap
   };
 
-  // Main matching logic
-  const calculateMatches = (users) => {
-    console.log("Calculating matches...");
-    const results = [];
-
-    // Compare all pairs of users
-    for (let i = 0; i < users.length; i++) {
-      for (let j = i + 1; j < users.length; j++) {
-        const user1 = users[i];
-        const user2 = users[j];
-
-        // Skip if course numbers are not the same
-        if (user1.course_number !== user2.course_number) continue;
-
-        // Parse available_time arrays into usable ranges
-        const timeRange1 = user1.available_time; // ["start", "end"]
-        const timeRange2 = user2.available_time; // ["start", "end"]
-
-        const overlapMinutes = calculateTimeOverlap(timeRange1, timeRange2);
-
-        // Skip if overlap is less than 60 minutes
-        if (overlapMinutes < 60) continue;
-
-        // Add match with overlap in hours
-        results.push({
-          user1: user1.neu_email,
-          user2: user2.neu_email,
-          overlapHours: (overlapMinutes / 60).toFixed(1), // Convert to hours and round
-        });
-      }
-    }
-
-    console.log("All Matches:", results);
-    return results;
-  };
-
-  // Fetch and process matches
-  const handleCalculateMatches = async () => {
+  // Calculate matches
+  const calculateMatches = async () => {
     setLoading(true);
     setMessage("");
 
     try {
-      const users = await fetchUsers();
-      const finalMatches = calculateMatches(users);
-      setMatches(finalMatches);
+      const allUsers = await fetchUsers();
+      const loggedInUser = allUsers.find((user) => user.neu_email === loggedInEmail);
+
+      if (!loggedInUser) {
+        setMessage("Could not find your details for matching.");
+        setLoading(false);
+        return;
+      }
+
+      const results = [];
+
+      for (const user of allUsers) {
+        if (user.neu_email === loggedInEmail) continue; // Skip logged-in user
+
+        // Skip if course numbers are not the same
+        if (loggedInUser.course_number !== user.course_number) continue;
+
+        // Calculate overlap in minutes
+        const overlapMinutes = calculateTimeOverlap(loggedInUser.available_time, user.available_time);
+
+        if (overlapMinutes >= 60) {
+          results.push({
+            user1: loggedInUser.name,
+            user2: user.name,
+            user2Email: user.neu_email,
+            overlapHours: (overlapMinutes / 60).toFixed(1), // Convert to hours
+          });
+        }
+      }
+
+      results.sort((a, b) => b.overlapHours - a.overlapHours); // Sort by overlap hours
+      setMatches(results);
       setMessage("Matches calculated successfully!");
     } catch (error) {
-      console.error("Error during match calculation:", error);
+      console.error("Error calculating matches:", error);
       setMessage("Error calculating matches.");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    handleCalculateMatches(); // Automatically calculate matches on mount
-  }, []);
-
   return (
-    <div className="DatabasePage">
-      <h1>Database Page</h1>
-      <button onClick={handleCalculateMatches} disabled={loading}>
-        {loading ? "Calculating Matches..." : "Calculate Matches"}
-      </button>
-      {message && <p>{message}</p>}
-      <div>
-        <h2>Match Results</h2>
-        {matches.length > 0 ? (
-          <ul>
-            {matches.map((match, index) => (
-              <li key={index}>
-                {match.user1} and {match.user2} with {match.overlapHours} hours of overlap
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No matches found.</p>
-        )}
-      </div>
+    <div className="databasePage">
+      <h1>Update Your Details</h1>
+
+      {loading && <p>Loading...</p>}
+
+      {!loading && (
+        <>
+          <form onSubmit={handleUpdateUserData}>
+            <div>
+              <label>Name:</label>
+              <input
+                type="text"
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+
+            <div>
+              <label>Course Number:</label>
+              <input
+                type="text"
+                placeholder="Course Number"
+                value={courseNumber}
+                onChange={(e) => setCourseNumber(e.target.value)}
+                required
+              />
+            </div>
+
+            <div>
+              <label>Available Times:</label>
+              <ul>
+                {availableTime.map((time, index) => (
+                  <li key={index}>
+                    {time}{" "}
+                    <button type="button" onClick={() => handleRemoveTime(time)}>
+                      Remove
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <input
+                type="text"
+                placeholder="Add Time Slot (e.g., 12:00-14:00)"
+                value={timeInput}
+                onChange={(e) => setTimeInput(e.target.value)}
+              />
+              <button type="button" onClick={handleAddTime}>
+                Add Time
+              </button>
+            </div>
+
+            <button type="submit">Save Changes</button>
+          </form>
+
+          <hr />
+
+          <h2>Calculate Matches</h2>
+          <button onClick={calculateMatches} disabled={loading}>
+            {loading ? "Calculating Matches..." : "Find Matches"}
+          </button>
+
+          {message && <p>{message}</p>}
+
+          <div>
+            <h2>Your Matches</h2>
+            {matches.length > 0 ? (
+              <ul>
+                {matches.map((match, index) => (
+                  <li key={index}>
+                    {match.user2} ({match.user2Email}) with {match.overlapHours} hours of overlap
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No matches found.</p>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };
