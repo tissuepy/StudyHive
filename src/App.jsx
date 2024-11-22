@@ -4,9 +4,9 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import './App.css';
 
 // Import Components
-import Login from './Login';
+import Login from './login';
 import CreateAccount from './CreateAccount';
-import Dashboard from './Dashboard';
+import Dashboard from './dashboard';
 import DatabasePage from './DatabasePage';
 import MatchPage from './MatchPage';
 
