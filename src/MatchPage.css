@@ -1,0 +1,100 @@
+/* MatchPage.css */
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: #fff;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .match-page {
+    text-align: center;
+    padding: 2rem;
+    min-height: 100vh;
+  }
+  
+  .match-page h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    animation: fadeIn 1.5s ease-in-out;
+  }
+  
+  .match-page img {
+    width: 150px;
+    height: auto;
+    margin-bottom: 2rem;
+    animation: bounce 2s infinite;
+  }
+  
+  .match-page button {
+    background-color: #ff7eb3;
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    font-size: 1.25rem;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+  }
+  
+  .match-page button:hover {
+    transform: scale(1.1);
+    background-color: #ff4a99;
+  }
+  
+  .match-page ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 2rem;
+  }
+  
+  .match-page ul li {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border-radius: 15px;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.6s ease-in-out;
+  }
+  
+  .match-page ul li:hover {
+    background: rgba(255, 255, 255, 0.4);
+    transform: translateY(-5px);
+    transition: transform 0.3s ease;
+  }
+  
+  /* Animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  

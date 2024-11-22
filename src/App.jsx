@@ -8,6 +8,7 @@ import Login from './Login';
 import CreateAccount from './CreateAccount';
 import Dashboard from './Dashboard';
 import DatabasePage from './DatabasePage';
+import MatchPage from './MatchPage';
 
 // Helper function to check login status
 const isLoggedIn = () => {
@@ -45,6 +46,14 @@ function App() {
           element={
             <ProtectedRoute>
               <DatabasePage />
+            </ProtectedRoute>
+          }
+        />
+                <Route
+          path="/MatchPage"
+          element={
+            <ProtectedRoute>
+              <MatchPage />
             </ProtectedRoute>
           }
         />

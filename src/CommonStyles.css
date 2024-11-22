@@ -1,0 +1,133 @@
+/* CommonStyles.css */
+
+/* General page styling */
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background: #333; /* Dark background */
+    color: white; /* White text */
+    text-align: center;
+  }
+  
+  /* Page container */
+  .container {
+    margin: 0 auto;
+    padding: 20px;
+    max-width: 800px;
+    border: 2px solid #666;
+    border-radius: 8px;
+    background-color: #444;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Header styling */
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #fff;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+  }
+  
+  /* Input styling */
+  .input-box {
+    margin: 15px 0;
+  }
+  
+  label {
+    font-size: 1.2rem;
+    display: block;
+    margin-bottom: 8px;
+    text-align: left;
+  }
+  
+  input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: #555;
+    color: #fff;
+    font-size: 1rem;
+  }
+  
+  input[type="text"]:focus {
+    outline: none;
+    border-color: #00bcd4;
+  }
+  
+  /* Time slider */
+  .time-slider {
+    margin: 30px 0;
+  }
+  
+  .rc-slider {
+    margin: 0 auto;
+    width: 90%;
+  }
+  
+  .rc-slider-track {
+    background-color: #00bcd4;
+  }
+  
+  .rc-slider-handle {
+    border: 2px solid #fff;
+    background-color: #00bcd4;
+    cursor: pointer;
+  }
+  
+  /* Buttons */
+  button {
+    background-color: #00bcd4;
+    border: none;
+    padding: 10px 20px;
+    color: white;
+    font-size: 1.1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+  }
+  
+  button:hover {
+    background-color: #0097a7;
+    transform: scale(1.15);
+    transition: all 0.2s ease-in-out;
+  }
+  
+  /* Back and Update buttons */
+  .action-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .action-buttons button {
+    flex: 1;
+    margin: 0 10px;
+  }
+  
+  /* Logo */
+  .logo {
+    width: 200px;
+    height: 200px;
+    margin-bottom: 5px;
+    animation: fadeIn 1s ease-in-out;
+
+  }
+  
+  /* Match results styling */
+  .match-results ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .match-results li {
+    margin: 10px 0;
+    padding: 10px;
+    background: #555;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    text-align: left;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
+  }
+  

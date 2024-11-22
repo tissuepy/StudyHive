@@ -1,27 +1,26 @@
-// Dashboard.jsx
 import React from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import './Dashboard.css';
+import coverlogo from './assets/coverlogo.png';
 
 const Dashboard = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken"); // Remove auth token
-    navigate("/login"); // Redirect to login page
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("neu_email");
+    navigate("/login");
   };
 
   return (
     <div className="dashboard">
-      <h1>Welcome to Your Dashboard</h1>
-      <p>This is your main dashboard where you can view and manage your account.</p>
-
-      <div>
-        <Link to="/databasePage">
-          <button>Go to Database Page</button>
-        </Link>
+      <img src={coverlogo} alt="Logo" className="dashboard-logo" />
+      <h1>Welcome to the Dashboard</h1>
+      <div className="button-container">
+        <button onClick={() => navigate("/DatabasePage")}>Update Your Details</button>
+        <button onClick={() => navigate("/MatchPage")}>Find Matches</button>
+        <button onClick={handleLogout}>Logout</button>
       </div>
-
-      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 };

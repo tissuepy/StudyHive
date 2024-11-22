@@ -1,0 +1,127 @@
+/* General Styles */
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #202020; /* Dark base background */
+  background-image: radial-gradient(
+      circle at center,
+      rgba(255, 255, 255, 0.1) 1%,
+      transparent 1%
+    ),
+    radial-gradient(
+      circle at center,
+      rgba(255, 255, 255, 0.05) 1%,
+      transparent 1%
+    );
+  background-size: 60px 60px;
+  background-position: 30px 30px, 0 0;
+  color: white;
+}
+
+/* Hexagon Background Layer */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(60deg, rgba(255, 255, 255, 0.08) 10%, transparent 10%),
+    linear-gradient(-60deg, rgba(255, 255, 255, 0.08) 10%, transparent 10%);
+  background-size: 60px 35px;
+  background-position: 0 0, 30px 17.5px;
+  opacity: 0.5;
+  pointer-events: none; /* Ensures it doesn't interfere with interactions */
+  z-index: -1;
+}
+
+/* Dashboard Container */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-height: 100vh;
+}
+
+/* Header Styles */
+.dashboard-header {
+  padding: 20px;
+  text-align: center;
+  background-color: #1e1e1e;
+  width: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+.dashboard-logo {
+  width: 120px;
+  margin-bottom: 10px;
+  animation: fadeIn 2s ease-in-out;
+}
+
+.dashboard-title {
+  font-size: 3rem;
+  margin: 0;
+  color: #ffa726;
+  text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.7);
+}
+
+.user-info {
+  margin-top: 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #ffa726;
+}
+
+/* Buttons Section */
+.dashboard-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 50px;
+}
+
+.dashboard-button,
+.logout-button {
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(45deg, #ffa726, #fb8c00);
+  border: none;
+  border-radius: 30px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.dashboard-button:hover,
+.logout-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.7);
+}
+
+.logout-button {
+  background: linear-gradient(45deg, #e53935, #d32f2f);
+}
+
+/* Footer */
+.dashboard-footer {
+  margin-top: auto;
+  padding: 20px;
+  font-size: 1rem;
+  color: #777;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
