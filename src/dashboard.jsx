@@ -14,7 +14,16 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
-      <img src={coverlogo} alt="Logo" className="dashboard-logo" />
+      <img
+      src={coverlogo}
+      alt="Logo"
+      className="dashboard-logo"
+      style={{
+        width: '20%',
+        height: 'auto', // Maintain aspect ratio
+  }}
+/>
+
       <h1>Welcome to the Dashboard</h1>
       <div className="button-container">
         <button onClick={() => navigate("/DatabasePage")}>Update Your Details</button>
