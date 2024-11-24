@@ -20,6 +20,7 @@ const ProtectedRoute = ({ children }) => {
   return isLoggedIn() ? children : <Navigate to="/login" />;
 };
 
+
 // Main App Component
 function App() {
   return (

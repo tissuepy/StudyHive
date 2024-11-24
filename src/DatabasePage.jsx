@@ -14,20 +14,21 @@ const DatabasePage = () => {
   const loggedInEmail = localStorage.getItem('neu_email');
 
   useEffect(() => {
+    document.title = 'Update Data';
     const fetchUserData = async () => {
-      const { data, error } = await supabase
+      const { data } = await supabase // check to see if supabase database is loaded in
         .from('userData')
         .select('*')
         .eq('neu_email', loggedInEmail)
         .single();
 
       if (data) {
-        setName(data.location || '');
+        setName(data.name || '');
         setCourseNumber(data.course_number || '');
         setLocation(data.location || '');
         if (data.available_time) {
           const [start, end] = data.available_time.map((t) => parseInt(t.split(':')[0]) * 60 + parseInt(t.split(':')[1]));
-          setTimeRange([start, end]);
+          setTimeRange([start, end]); // parse the data ^^ split by :  
         }
       }
       
@@ -44,13 +45,13 @@ const DatabasePage = () => {
 
     const { error } = await supabase
       .from('userData')
-      .update({ location, name, course_number: courseNumber, available_time: formattedTime })
-      .eq('neu_email', loggedInEmail);
+      .update({ location, name, course_number: courseNumber, available_time: formattedTime }) // update data in db
+      .eq('neu_email', loggedInEmail); // pair with logged in email!
 
     if (!error) alert('Details updated successfully!');
   };
 
-  return (
+  return ( // frontend
     <div className="container">
       <img src={coverlogo} alt="Logo" className="logo" />
       <h1>Enter Your Data</h1>

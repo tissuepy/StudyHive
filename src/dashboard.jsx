@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 import coverlogo from './assets/coverlogo.png';
 
+
+document.title = 'Dashboard';
 const Dashboard = () => {
   const navigate = useNavigate();
 

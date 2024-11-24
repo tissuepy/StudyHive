@@ -16,6 +16,7 @@ const CreateAccount = () => {
 
   // Fetch the next available ID when the component mounts
   useEffect(() => {
+    document.title = 'Create Account';
     const fetchNextId = async () => {
       try {
         // Get the highest existing ID in the userData table

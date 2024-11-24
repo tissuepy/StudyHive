@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 
 const Login = () => {
+  document.title = 'Login';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');

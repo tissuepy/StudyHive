@@ -82,6 +82,7 @@ const MatchPage = () => {
   };
 
   useEffect(() => {
+    document.title = 'Match Page';
     fetchMatches();
   }, []);
 
